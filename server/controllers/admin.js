@@ -1,9 +1,6 @@
 const { getAllData, insertData } = require("../config/controllerconfig");
 const { db } = require("../database/connect");
 const bcrypt = require("bcrypt");
-const {
-  generateTokenAndSetCookie,
-} = require("../utils/generateTokenAndSetCookie");
 
 const GetAdmin = (req, res) => {
   const query = "SELECT * FROM Admin";
@@ -30,17 +27,7 @@ const PostAdmin = async (req, res) => {
         }
         const query =
           "INSERT INTO admin (Email, Numero, Mot_de_Passe) VALUES (?, ?, ?)";
-        db.query(query, [Email, Numero, hashedPassword], (err, result) => {
-          if (err) {
-            return res
-              .status(500)
-              .json({ message: "Erreur lors de l'insertion" });
-          }
-          const token = generateTokenAndSetCookie(res, result.insertId);
-          return res
-            .status(201)
-            .json({ message: "Administrateur créé avec succès", token });
-        });
+        insertData(query, [Email, Numero, hashedPassword], res);
       });
     }
   });

@@ -1,8 +1,10 @@
 const express = require("express");
 const { db } = require("../database/connect");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const { getAllData } = require("../config/controllerconfig");
+const {
+  generateTokenAndSetCookie,
+} = require("../utils/generateTokenAndSetCookie");
 
 const GetlogAdmin = (req, res) => {
   const query = "SELECT * FROM admin";
@@ -33,7 +35,8 @@ const LogAdmin = async (req, res) => {
       if (!isMatch) {
         return res.status(401).json({ message: "Mot de passe incorrect" });
       }
-      return res.status(200).json({ message: "Connexion réussie", user });
+      const token = generateTokenAndSetCookie(res, result.insertId);
+      return res.status(200).json({ message: "Connexion réussie", token });
     });
   });
 };
