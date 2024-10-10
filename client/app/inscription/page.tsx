@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Phone, Mails, User } from "lucide-react";
 import { PiLockKeyOpenDuotone } from "react-icons/pi";
 import Link from "next/link";
+import PasswordStrenth from "@/components/PasswordStrenth";
 
 export default function Main() {
   const [password, setPassword] = useState("");
@@ -29,37 +30,40 @@ export default function Main() {
     /* <main className="bg-red-500 overflow-y-hidden rounded-md"> */
     <div
       className=" flex justify-center items-center object-cover h-screen bg-cover bg-center "
-      style={{ backgroundImage: "url('/img1.jpg')" }}
+      style={{ backgroundImage: "url('/blob-scene-haikei.svg')" }}
     >
-      <Card className="w-[320px]">
-        <CardContent className=" p-6">
+      <Card className="w-[320px] rounded-lg">
+        <CardContent className="  p-6">
           <div className=" flex items-center justify-center">
-            <Image src="/login.svg" width={150} height={150} alt="logo" />
+            <Image src="/login.svg" width={120} height={120} alt="logo" />
+            {/* <h1 className=" text-3xl font-medium">inscription</h1> */}
           </div>
           <form action="" className=" space-y-4">
             <div></div>
-            <div className="relative">
+            {/* <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-[1.4rem] w-[1.4rem] " />
               </span>
               <Input
+                type="text"
                 placeholder="Nom d'utilisateur"
                 className="w-full pl-[2.80rem] h-[2.7rem]"
                 required
               />
-            </div>
+            </div> */}
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mails className="h-[1.4rem] w-[1.4rem] " />
               </span>
               <Input
                 placeholder="exemple@exemple.com"
+                type="email"
                 className="w-full pl-[2.80rem] h-[2.7rem]"
                 required
               />
             </div>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-2 gap-1 flex items-center pointer-events-none">
+              <span className="absolute inset-y-0 left-0 pl-3 gap-1 flex items-center pointer-events-none">
                 {/* <Phone className="h-[1.1rem] w-[1.3rem] " /> */}
                 <Image src="/civ.png" width={20} height={20} alt="" />
                 <h1>+225</h1>
@@ -67,7 +71,7 @@ export default function Main() {
               <Input
                 placeholder="Numéro de téléphone"
                 type="number"
-                className="w-full pl-[4.7rem] h-[2.7rem]"
+                className="w-full pl-[4.9rem] h-[2.7rem]"
                 required
               />
             </div>
@@ -78,6 +82,7 @@ export default function Main() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
+                required
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe"
                 className="w-full  h-10 pl-[2.70rem]  rounded-md  border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed  pr-10 p-2 border border-gray-300 "
@@ -89,6 +94,7 @@ export default function Main() {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
+            <PasswordStrenth password={password} />
             <Button type="submit" className=" h-[2.5rem] w-full bg-[#08162a]">
               Appuyer
             </Button>

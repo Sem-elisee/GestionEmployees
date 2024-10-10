@@ -44,9 +44,9 @@ export default function Main() {
   return (
     <div
       className=" flex justify-center items-center h-screen bg-cover bg-center "
-      style={{ backgroundImage: "url('/img2.jpg')" }}
+      style={{ backgroundImage: "url('/blob-scene-haikei 11.svg')" }}
     >
-      <Card className="w-[320px]">
+      <Card className="w-[320px] rounded-lg">
         <CardContent className=" p-6">
           <div className=" flex items-center justify-center">
             <Image src="/register.svg" width={150} height={150} alt="logo" />
