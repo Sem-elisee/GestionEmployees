@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { Toaster, toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,35 +11,51 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import Link from "next/link";
-
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Mails, Phone, PhoneCall, User } from "lucide-react";
 import { PiLockKeyOpenDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Main() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const router = useRouter();
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let AdminData = {
+      Email: email,
+      Mot_de_Passe: password,
+    };
+
+    try {
+      axios
+        .post(`http://localhost:2003/api/v.01/logAdmin`, AdminData)
+        .then((response) => {
+          const token = response.data.token;
+          if (token) {
+            localStorage.setItem("authToken", token);
+            router.push("/tableaudebord");
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -48,11 +65,11 @@ export default function Main() {
     >
       <Card className="w-[320px] rounded-lg">
         <CardContent className=" p-6">
-          <div className=" flex items-center justify-center">
+          <div className=" flex items-center p-2 justify-center">
             <Image src="/register.svg" width={150} height={150} alt="logo" />
           </div>
-          <form className=" space-y-4">
-            <div></div>
+          <div></div>
+          <form className=" space-y-4" onSubmit={handleSubmit}>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mails className="h-[1.4rem] w-[1.4rem] " />
@@ -61,6 +78,8 @@ export default function Main() {
                 placeholder="exemple@exemple.com"
                 className="w-full pl-[2.80rem] h-[2.7rem]"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -82,9 +101,14 @@ export default function Main() {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-            <Button type="submit" className=" h-[2.5rem] w-full bg-[#08162a]">
+            <Button
+              type="submit"
+              onClick={() => {}}
+              className=" h-[2.5rem] w-full bg-[#08162a]"
+            >
               Appuyer
             </Button>
+
             <div className=" flex text-center justify-center">
               <div className=" flex gap-0 text-center text-[.8rem] text-[#777676]">
                 Vous n’avez pas de compte?

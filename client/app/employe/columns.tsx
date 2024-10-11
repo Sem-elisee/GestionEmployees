@@ -110,7 +110,18 @@ export const columns: ColumnDef<employe>[] = [
     accessorKey: "Salaire",
     header: "Salaire",
     cell: ({ row }) => {
-      return <div>{row.getValue("Salaire")} $</div>;
+      return (
+        <div className=" flex items-center text-center">
+          {row.getValue("Salaire")}{" "}
+          <Image
+            src="/FCFA.png"
+            alt=""
+            width={20}
+            height={20}
+            className=" w-4 h-5"
+          />
+        </div>
+      );
     },
   },
   {

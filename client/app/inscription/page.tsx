@@ -1,9 +1,10 @@
 "use client";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -17,17 +18,59 @@ import { Phone, Mails, User } from "lucide-react";
 import { PiLockKeyOpenDuotone } from "react-icons/pi";
 import Link from "next/link";
 import PasswordStrenth from "@/components/PasswordStrenth";
+import { log } from "console";
+import axios from "axios";
 
 export default function Main() {
-  const [password, setPassword] = useState("");
+  // const [isClient, setIsClient] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [numero, setNumero] = useState<number>(225);
+  const [password, setPassword] = useState<any>("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const handlePasswordValidation = (Valid: boolean) => {
+    setIsValid(Valid);
+  };
+
+  console.log(email);
+  console.log(numero);
+  console.log(password);
+
+  const handlePassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isValid) {
+      alert("Veuillez remplir correctement tous les critères du mot de passe");
+    }
+    let adminInscription = {
+      Email: email,
+      Numero: numero,
+      Mot_de_Passe: password,
+    };
+
+    try {
+      axios
+        .post(`http://localhost:2003/api/v.01/admin`, adminInscription)
+        .then((response) => {
+          if (response) {
+            setEmail("");
+            setPassword("");
+            setNumero(0);
+            router.push("/");
+          }
+        })
+        .catch((err) => console.error(err));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
-    // <section className="bg-red-300 overflow-y-hidden p-4">
-    /* <main className="bg-red-500 overflow-y-hidden rounded-md"> */
     <div
       className=" flex justify-center items-center object-cover h-screen bg-cover bg-center "
       style={{ backgroundImage: "url('/blob-scene-haikei.svg')" }}
@@ -36,21 +79,8 @@ export default function Main() {
         <CardContent className="  p-6">
           <div className=" flex items-center justify-center">
             <Image src="/login.svg" width={120} height={120} alt="logo" />
-            {/* <h1 className=" text-3xl font-medium">inscription</h1> */}
           </div>
-          <form action="" className=" space-y-4">
-            <div></div>
-            {/* <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-[1.4rem] w-[1.4rem] " />
-              </span>
-              <Input
-                type="text"
-                placeholder="Nom d'utilisateur"
-                className="w-full pl-[2.80rem] h-[2.7rem]"
-                required
-              />
-            </div> */}
+          <form className=" space-y-4" onSubmit={handlePassword}>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mails className="h-[1.4rem] w-[1.4rem] " />
@@ -60,19 +90,22 @@ export default function Main() {
                 type="email"
                 className="w-full pl-[2.80rem] h-[2.7rem]"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 gap-1 flex items-center pointer-events-none">
-                {/* <Phone className="h-[1.1rem] w-[1.3rem] " /> */}
                 <Image src="/civ.png" width={20} height={20} alt="" />
-                <h1>+225</h1>
+                <h1>+</h1>
               </span>
               <Input
                 placeholder="Numéro de téléphone"
                 type="number"
-                className="w-full pl-[4.9rem] h-[2.7rem]"
+                className="w-full pl-[3rem] h-[2.7rem]"
                 required
+                value={numero}
+                onChange={(e) => setNumero(Number(e.target.value))}
               />
             </div>
             <div className="relative ">
@@ -94,8 +127,15 @@ export default function Main() {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-            <PasswordStrenth password={password} />
-            <Button type="submit" className=" h-[2.5rem] w-full bg-[#08162a]">
+            <PasswordStrenth
+              password={password}
+              onValidationChange={handlePasswordValidation}
+            />
+            <Button
+              type="submit"
+              disabled={!isValid}
+              className=" h-[2.5rem] w-full bg-[#08162a]"
+            >
               Appuyer
             </Button>
             <div className=" flex text-center justify-center">
@@ -112,28 +152,5 @@ export default function Main() {
         </CardContent>
       </Card>
     </div>
-    // </main>
-    // </section>
   );
 }
-
-// "use client";
-// import React, { useState } from "react";
-
-// const page = () => {
-
-//   return (
-//     <div style={{ position: "relative", width: "250px" }}>
-//       <input
-//         type={showPassword ? "text" : "password"}
-//         value={password}
-//         onChange={(e) => setPassword(e.target.value)}
-//         placeholder="Enter password"
-//         style={{ width: "100%", paddingRight: "30px" }}
-//       />
-
-//     </div>
-//   );
-// };
-
-// export default page;
