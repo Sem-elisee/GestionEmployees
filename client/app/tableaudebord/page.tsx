@@ -13,6 +13,7 @@ import {
 
 import { data } from "@/constants";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [click, setClick] = useState("Tableau de Bord");
@@ -43,6 +44,15 @@ const Page = () => {
     date: "",
     time: "",
   });
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      router.push("/");
+    }
+  }, [router]);
 
   useEffect(() => {
     const formatDateTime = () => {

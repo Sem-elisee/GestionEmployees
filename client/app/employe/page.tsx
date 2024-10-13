@@ -62,8 +62,8 @@ import {
 } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
+import { useRouter } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
@@ -78,8 +78,6 @@ import Image from "next/image";
 import { employe, columns } from "./columns";
 import { DataTable } from "./data-table";
 import { RefectchContex } from "@/provider";
-import { log } from "console";
-import { any } from "zod";
 
 // la 1
 async function getEmploye(): Promise<employe[]> {
@@ -91,6 +89,15 @@ async function getEmploye(): Promise<employe[]> {
 const Page = () => {
   const [click, setClick] = useState("Employé");
   const [reduct, setReduct] = useState(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      router.push("/");
+    }
+  }, [router]);
 
   // const [selectedImage, setSelectedImage] = useState(
   //   "/Image upload-bro (1).svg"
