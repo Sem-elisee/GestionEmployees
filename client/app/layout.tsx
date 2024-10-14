@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientComponent from "./ClientComponent";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Gestion Employés",
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Toaster richColors position="bottom-right" />
         <ClientComponent />
         {children}
       </body>

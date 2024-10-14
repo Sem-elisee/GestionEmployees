@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Toaster, toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,14 +44,20 @@ export default function Main() {
       axios
         .post(`http://localhost:2003/api/v.01/logAdmin`, AdminData)
         .then((response) => {
-          const token = response.data.token;
-          if (token) {
-            localStorage.setItem("authToken", token);
-            router.push("/tableaudebord");
+          if (response) {
+            toast.success(" Bienvenue, administrateur !");
+            const token = response.data.token;
+            if (token) {
+              localStorage.setItem("authToken", token);
+              router.push("/tableaudebord");
+            }
           }
         })
         .catch((err) => {
           console.error(err);
+          toast.error(
+            "Erreur de connexion. Vérifiez votre email et votre mot de passe."
+          );
         });
     } catch (e) {
       console.log(e);
@@ -77,12 +83,12 @@ export default function Main() {
               <Input
                 placeholder="exemple@exemple.com"
                 className="w-full pl-[2.80rem] h-[2.7rem]"
+                type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
             <div className="relative ">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <PiLockKeyOpenDuotone className="h-[1.4rem] w-[1.4rem]" />
@@ -90,6 +96,7 @@ export default function Main() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
+                required
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe"
                 className="w-full  h-10 pl-[2.70rem]  rounded-md  border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed  pr-10 p-2 border border-gray-300 "
@@ -101,14 +108,9 @@ export default function Main() {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </span>
             </div>
-            <Button
-              type="submit"
-              onClick={() => {}}
-              className=" h-[2.5rem] w-full bg-[#08162a]"
-            >
+            <Button type="submit" className=" h-[2.5rem] w-full bg-[#08162a]">
               Appuyer
             </Button>
-
             <div className=" flex text-center justify-center">
               <div className=" flex gap-0 text-center text-[.8rem] text-[#777676]">
                 Vous n’avez pas de compte?
@@ -120,6 +122,7 @@ export default function Main() {
               </div>
             </div>
           </form>
+          <div></div>
         </CardContent>
       </Card>
     </div>
