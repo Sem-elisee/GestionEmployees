@@ -47,8 +47,10 @@ export default function Main() {
           if (response) {
             toast.success(" Bienvenue, administrateur !");
             const token = response.data.token;
+            const telephone = response.data.Numero; // Supposons que l'API retourne aussi le téléphone
             if (token) {
               localStorage.setItem("authToken", token);
+              // localStorage.setItem("adminEmail", email);
               router.push("/tableaudebord");
             }
           }

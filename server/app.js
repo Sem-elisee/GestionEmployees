@@ -14,6 +14,7 @@ const LogAdmin = require("./routes/logAdmin.routes");
 const Logout = require("./routes/logout.routes");
 
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
+console.log("JWT_SECRET_MAIL:", process.env.JWT_SECRET_MAIL);
 
 app.get("/", (req, res) => res.send("send sem"));
 app.use(express.json());
