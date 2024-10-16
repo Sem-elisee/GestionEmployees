@@ -7,7 +7,7 @@ const { transporter } = require("./mail.config");
 const sendVerificationEmail = async (email, verificationCode) => {
   try {
     const response = await transporter.sendMail({
-      from: '"Guibe" <guibesem@gmail.com>',
+      from: '"APITEST SEM" <guibesem@gmail.com>',
       to: email,
       subject: "Vérifiez votre e-mail",
       text: "Vérifiez votre e-mail",
