@@ -47,12 +47,12 @@ const Page = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      router.push("/");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   if (!token) {
+  //     router.push("/");
+  //   }
+  // }, [router]);
 
   useEffect(() => {
     const formatDateTime = () => {

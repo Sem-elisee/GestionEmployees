@@ -61,7 +61,7 @@ export default function Main() {
             setEmail("");
             setPassword("");
             setNumero(0);
-            router.push("/");
+            router.push("/verification");
           }
         })
         .catch((err) => console.error(err));

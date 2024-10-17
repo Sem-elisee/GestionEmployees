@@ -32,7 +32,7 @@ export default function Main() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let AdminData = {
@@ -41,16 +41,14 @@ export default function Main() {
     };
 
     try {
-      axios
-        .post(`http://localhost:2003/api/v.01/logAdmin`, AdminData)
+      await axios
+        .post(`http://localhost:2003/api/v.01/logAdmin/`, AdminData)
         .then((response) => {
           if (response) {
             toast.success(" Bienvenue, administrateur !");
             const token = response.data.token;
-            const telephone = response.data.Numero; // Supposons que l'API retourne aussi le téléphone
             if (token) {
               localStorage.setItem("authToken", token);
-              // localStorage.setItem("adminEmail", email);
               router.push("/tableaudebord");
             }
           }

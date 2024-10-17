@@ -3,6 +3,9 @@ const { db } = require("../database/connect");
 const bcrypt = require("bcrypt");
 const { sendVerificationEmail, sendWelcomeEmail } = require("../mail/email");
 const { generateTokenAndSetCookieMail } = require("../mail/generateToken");
+const {
+  generateTokenAndSetCookie,
+} = require("../utils/generateTokenAndSetCookie");
 
 const GetAdmin = (req, res) => {
   const query = "SELECT * FROM Admin";
@@ -65,8 +68,7 @@ const PostAdmin = async (req, res) => {
 
         // Insertion des informations de l'administrateur dans la base de données
         const insertAdminQuery =
-          "INSERT INTO admin (Email, Numero, Mot_de_Passe, VerificationToken, VerificationTokenExpireAt, IsVerified) VALUES (?, ?, ?, ?, ?, FALSE)";
-
+          "INSERT INTO admin (Email, Numero, Mot_de_Passe, VerificationToken, VerificationTokenExpireAt) VALUES (?, ?, ?, ?, ?)";
         db.query(
           insertAdminQuery,
           [
@@ -117,36 +119,91 @@ const VerifyEmail = async (req, res) => {
         console.log(err);
         return res
           .status(500)
-          .json({ success: false, message: "Internal server error" });
+          .json({ success: false, message: "Erreur interne du serveur" });
       }
       if (results.length === 0) {
         return res
           .status(400)
-          .json({ success: false, message: "Invalid or Expired Code" });
+          .json({ success: false, message: "Code invalide ou expiré" });
       }
       const user = results[0];
+
+      // Mettre à jour l'administrateur en supprimant le jeton de vérification et sa date d'expiration
       const updateQuery =
-        "UPDATE admin SET isVerified = TRUE, VerificationToken = NULL, VerificationTokenExpireAt = NULL WHERE AdminID = ?";
-      db.query(updateQuery, [user.AdminID], async (updateErr) => {
+        "UPDATE admin SET VerificationToken = NULL, VerificationTokenExpireAt = NULL WHERE AdminID = ?";
+      db.query(updateQuery, [user.AdminID], async (updateErr, result) => {
         if (updateErr) {
           console.log(updateErr);
           return res
             .status(500)
-            .json({ success: false, message: "Internal server error" });
+            .json({ success: false, message: "Erreur interne du serveur" });
         }
+
+        // Envoyer un email de bienvenue
         await sendWelcomeEmail(user.Email, user.Name);
-        return res
-          .status(200)
-          .json({ success: true, message: "Email Verified Successfully" });
+
+        // Générer un nouveau jeton JWT et l'envoyer dans un cookie
+        const token = generateTokenAndSetCookie(res, user.AdminID);
+
+        return res.status(200).json({
+          success: true,
+          message: "Email vérifié avec succès",
+          token,
+        });
       });
     });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
-      .json({ success: false, message: "Internal server error" });
+      .json({ success: false, message: "Erreur interne du serveur" });
   }
 };
+
+// const VerifyEmail = async (req, res) => {
+//   try {
+//     const { code } = req.body;
+//     const query =
+//       "SELECT * FROM admin WHERE VerificationToken = ? AND VerificationTokenExpireAt > ?";
+//     db.query(query, [code, Date.now()], async (err, results) => {
+//       if (err) {
+//         console.log(err);
+//         return res
+//           .status(500)
+//           .json({ success: false, message: "Internal server error" });
+//       }
+//       if (results.length === 0) {
+//         return res
+//           .status(400)
+//           .json({ success: false, message: "Invalid or Expired Code" });
+//       }
+//       const user = results[0];
+//       const updateQuery =
+//         "UPDATE admin SET isVerified = TRUE, VerificationToken = NULL, VerificationTokenExpireAt = NULL WHERE AdminID = ?";
+//       db.query(updateQuery, [user.AdminID], async (updateErr, result) => {
+//         if (updateErr) {
+//           console.log(updateErr);
+//           return res
+//             .status(500)
+//             .json({ success: false, message: "Internal server error" });
+//         }
+//         await sendWelcomeEmail(user.Email, user.Name);
+//         const token = generateTokenAndSetCookie(res, result.insertId);
+
+//         return res.status(200).json({
+//           success: true,
+//           message: "Email Verified Successfully",
+//           token,
+//         });
+//       });
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Internal server error" });
+//   }
+// };
 
 module.exports = {
   GetAdmin,
