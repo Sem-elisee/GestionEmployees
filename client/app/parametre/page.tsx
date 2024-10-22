@@ -1,15 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { TbLogout2 } from "react-icons/tb";
-
-import {
-  ShoppingCart,
-  LayoutDashboard,
-  UsersRound,
-  Settings,
-  ChevronRight,
-  Pencil,
-} from "lucide-react";
+import { useUserStore } from "@/store/Store";
+import { Pencil } from "lucide-react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -24,15 +17,14 @@ import {
 import { data } from "@/constants";
 import Link from "next/link";
 import axios from "axios";
-// import { useSelector } from "react-redux";
 
 const Page = () => {
   const [click, setClick] = useState("Paramètre");
   const [reduct, setReduct] = useState(true);
   const [adminInfo, setAdminInfo] = useState(null);
 
-  // const adminEmail = useSelector((state: any) => state.admin.email);
-  // const adminTelephone = useSelector((state: any) => state.admin.telephone);
+  const Email = useUserStore((state) => state.Email);
+  const Numero = useUserStore((state) => state.Numero);
 
   const handleClick = () => {
     setReduct(!reduct);
@@ -51,12 +43,12 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      router.push("/");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   if (!token) {
+  //     router.push("/");
+  //   }
+  // }, [router]);
 
   return (
     <div>
@@ -146,11 +138,11 @@ const Page = () => {
                     <div className=" space-y-4">
                       <div className=" flex flex-col">
                         <span className=" font-bold text-xl">Email:</span>
-                        <span>{}</span>
+                        <span>{Email}</span>
                       </div>
                       <div className=" flex flex-col">
                         <span className="font-bold text-xl">Numero:</span>
-                        <span>{}</span>
+                        <span>+ {Numero}</span>
                       </div>
 
                       <button className=" flex items-center gap-3 border-[1.5px] px-7 py-3 rounded-md border-[#000]">
@@ -159,19 +151,6 @@ const Page = () => {
                           Edit Profile
                         </span>
                       </button>
-
-                      {/* <div>
-                      {adminEmail ? (
-                        <p>Bienvenue, {adminEmail} !</p>
-                      ) : (
-                        <p>Chargement de email de administrateur...</p>
-                      )}
-                    </div> */}
-
-                      {/* <div className=" flex flex-col">
-                      <span className=" font-medium">Email</span>
-                      <span>guibesem@gmail.com</span>
-                    </div> */}
                     </div>
                   </div>
                 </div>

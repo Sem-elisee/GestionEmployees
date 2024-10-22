@@ -1,159 +1,160 @@
 "use client";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState, useRef } from "react";
+import { toast, Toaster } from "sonner";
+import { motion } from "framer-motion";
+import { Loader } from "lucide-react";
+
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 import { useRouter } from "next/navigation";
-
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import Image from "next/image";
 import axios from "axios";
+// import { Input } from "@/components/ui/input";
 
 const Page = () => {
-  const [otpValue, setOtpValue] = useState("");
-
+  const [otpValue, setOtpValue] = useState(Array(6).fill(""));
+  const [isLoading, setisLoading] = useState(false);
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]); // Références pour chaque input
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("authToken");
-  //   if (!token) {
-  //     router.push("/");
-  //   }
-  // }, [router]);
+  // Fonction pour réinitialiser l'OTP
+  const resetOtp = () => {
+    setOtpValue(Array(6).fill("")); // Réinitialise les inputs
+    inputRefs.current[0]?.focus(); // Remet le focus sur le premier champ
+  };
 
-  const handleSubmit = async (e: any) => {
+  const handleOtpChange = (index: number, value: string) => {
+    if (/^[0-9]$/.test(value)) {
+      // S'assure que seule une entrée numérique est acceptée
+      const newOtpValue = [...otpValue];
+      newOtpValue[index] = value;
+      setOtpValue(newOtpValue);
+
+      // Bascule vers l'input suivant si le chiffre est entré
+      if (value !== "" && index < 5) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "Backspace" && otpValue[index] === "" && index > 0) {
+      // Basculer vers l'input précédent en cas de suppression
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let codeConfirm = {
-      code: otpValue,
+    setisLoading(true);
+    const codeConfirm = {
+      code: otpValue.join(""),
     };
     try {
-      await axios
-        .post(`http://localhost:2003/api/v.01/admin/verification`, codeConfirm)
-        .then((response) => {
-          if (response) {
-            const token = response.data.token;
-            if (token) {
-              localStorage.setItem("authToken", token);
-              router.push("/tableaudebord");
-            }
-          }
-        });
+      const response = await axios.post(
+        `http://localhost:2003/api/v.01/admin/verification`,
+        codeConfirm
+      );
+      if (response) {
+        toast.success("Bienvenue, administrateur !");
+        const token = response.data.token;
+        if (token) {
+          localStorage.setItem("authToken", token);
+          router.push("/tableaudebord");
+        }
+      }
+      resetOtp(); // Réinitialise les inputs après succès
     } catch (err) {
       console.error("Erreur", err);
+      toast.error("La vérification a échoué.");
+      resetOtp(); // Réinitialise les inputs après erreur
+    } finally {
+      setisLoading(false);
     }
-    console.log("OTP Value:", otpValue);
   };
 
   return (
-    <div
-      className=" flex justify-center items-center h-screen bg-cover bg-center "
+    <motion.div
+      className="flex justify-center items-center h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('/blob-scene-haikei 11.svg')" }}
     >
-      <div>
-        <Card className="w-[420px] rounded-lg">
-          <CardContent className="p-8">
-            <h1 className=" text-center text-2xl font-medium">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Card className="w-[350px] rounded-lg">
+          <CardContent className="p-2">
+            <div className="flex items-center justify-center">
+              <Image
+                src="/Confirmed-pana.svg"
+                width={180}
+                height={150}
+                alt=""
+              />
+            </div>
+            <h1 className="text-center text-2xl font-bold">
               Vérification du Mail
             </h1>
             <form onSubmit={handleSubmit}>
-              <div className="flex items-center space-y-8 justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={otpValue}
-                  onChange={(value) => {
-                    console.log("OTP Changed:", value);
-                    setOtpValue(value);
-                  }}
-                  className="flex justify-center items-center"
-                >
-                  <InputOTPGroup className="flex gap-2">
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
+              <div className="flex items-center space-y-4 justify-center">
+                <div className="flex gap-2 py-1">
+                  {otpValue.map((value, index) => (
+                    <input
+                      key={index}
+                      id={`otp-slot-${index}`}
+                      ref={(el) => {
+                        inputRefs.current[index] = el; // Assigner la référence sans retour
+                      }}
+                      value={value}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      className="w-10 h-10 text-center text-xl border border-gray-300 rounded"
+                      inputMode="numeric"
+                      maxLength={1}
+                      autoFocus={index === 0} // Auto-focus sur le premier champ
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="flex justify-center items-center mt-4">
-                <Button className="px-[6.7rem] py-5" type="submit">
-                  Vérifier Email
+              <motion.div
+                className="flex justify-center mt-3 items-center"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button
+                  disabled={isLoading}
+                  className="w-[17.5rem] py-5 hover:scale-1 transition duration-200"
+                  type="submit"
+                >
+                  {isLoading ? (
+                    <div>
+                      <Loader
+                        className="animate-spin mx-auto text-white"
+                        size={24}
+                      />
+                    </div>
+                  ) : (
+                    "Vérifier Email"
+                  )}
                 </Button>
-              </div>
-              <div className="text-center text-sm py-4">
-                {otpValue === "" ? (
+              </motion.div>
+              <div className="text-center font-medium text-sm py-4">
+                {otpValue.join("") === "" ? (
                   <>Entrez votre mot de passe à usage unique.</>
                 ) : (
-                  <>Code: {otpValue}</>
+                  <>Code: {otpValue.join("")}</>
                 )}
               </div>
             </form>
-            {/* <form onSubmit={handleSubmit}>
-              <div className="space-y-4 ">
-                <div className=" flex items-center space-y-8 justify-center">
-                  <InputOTP
-                    maxLength={6}
-                    value={value}
-                    onChange={(value) => setValue(value)}
-                    className="flex justify-center items-center"
-                  >
-                    <InputOTPGroup className=" flex gap-2">
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </div>
-                <div className="flex justify-center items-center">
-                  <Button className="px-[6.7rem] py-5" type="submit">
-                    Vérifier Email
-                  </Button>
-                </div>
-                
-            </form> */}
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
 export default Page;
-
-{
-  /* <form onSubmit={handleSubmit}>
-				<div className='flex justify-between'>
-					{code.map((digit, index) => (
-						<input
-							key={index}
-							ref={(el) => (inputRefs.current[index] = el)}
-							type='text'
-							maxLength='6'
-							value={digit}
-							onChange={(e) => handleChange(index, e.target.value)}
-							onKeyDown={(e) => handleKeyDown(index, e)}
-							className='w-12 h-12 text-center text-2xl font-bold ...'
-						/>
-					))}
-				</div>
-				<motion.button ... >
-					{isLoading ? "Verifying..." : "Verify Email"}
-				</motion.button>
-			</form> */
-}

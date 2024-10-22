@@ -16,6 +16,24 @@ const GetAllEmployeCount = (req, res) => {
   getAllData(query, res);
 };
 
+const GetAllEmployeCountTechMoyen = (req, res) => {
+  const query =
+    "SELECT COUNT(Fonction) AS count FROM employe WHERE Fonction = 'Tech-moyen'";
+  getAllData(query, res);
+};
+
+const GetAllEmployeCountTechMoyenSup = (req, res) => {
+  const query =
+    "SELECT COUNT(Fonction) AS count FROM employe WHERE Fonction = 'Tech-moyen-superieur'";
+  getAllData(query, res);
+};
+
+const GetAllEmployeCountTechSup = (req, res) => {
+  const query =
+    "SELECT COUNT(Fonction) AS count FROM employe WHERE Fonction = 'Tech-superieur'";
+  getAllData(query, res);
+};
+
 const PostEmploye = (req, res) => {
   const query =
     "INSERT INTO employe (Image,Nom,Date_Embauche,Salaire,Direction,Fonction) VALUES(?,?,?,?,?,?)";
@@ -53,4 +71,7 @@ module.exports = {
   PostEmploye,
   PutEmploye,
   DeleteEmploye,
+  GetAllEmployeCountTechMoyen,
+  GetAllEmployeCountTechMoyenSup,
+  GetAllEmployeCountTechSup,
 };

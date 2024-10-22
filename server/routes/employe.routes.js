@@ -5,6 +5,9 @@ const {
   PutEmploye,
   DeleteEmploye,
   GetAllEmployeCount,
+  GetAllEmployeCountTechMoyen,
+  GetAllEmployeCountTechMoyenSup,
+  GetAllEmployeCountTechSup,
 } = require("../controllers/employe");
 
 const path = require("path");
@@ -30,5 +33,8 @@ router.route("/").get(GetAllEmploye).post(upload.single("Image"), PostEmploye);
 router.route("/:id").put(upload.single("Image"), PutEmploye);
 router.route("/:id").delete(DeleteEmploye);
 router.route("/count").get(GetAllEmployeCount);
+router.route("/countTechMoyen").get(GetAllEmployeCountTechMoyen);
+router.route("/countTechMoyenSup").get(GetAllEmployeCountTechMoyenSup);
+router.route("/countTechSup").get(GetAllEmployeCountTechSup);
 
 module.exports = router;

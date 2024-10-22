@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import { Calendar } from "lucide-react";
@@ -10,15 +10,63 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CountUp from "react-countup";
 
 import { data } from "@/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GrGroup } from "react-icons/gr";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 const Page = () => {
   const [click, setClick] = useState("Tableau de Bord");
   const [reduct, setReduct] = useState(true);
+
   const [employeeCount, setEmployeeCount] = useState<number>(0);
+  const [employeTechMoyen, setEmployeTechMoyen] = useState<number>(0);
+  const [employeTechMoyenSup, setEmployeTechMoyenSup] = useState<number>(0);
+  const [employeTechSup, setEmployeTechSup] = useState<number>(0);
+  // const [position, setPosition] = useState(null);
+  // const [position, setPosition] = useState<L.LatLngTuple | null>(null);
+  // const [error, setError] = useState<string | null>(null);
+
+  // const redIcon = new L.Icon({
+  //   iconUrl:
+  //     "https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF0000",
+  //   iconSize: [25, 41],
+  //   iconAnchor: [12, 41],
+  // });
+
+  // useEffect(() => {
+  //   const geolocationOptions = {
+  //     enableHighAccuracy: true,
+  //     timeout: 10000,
+  //     maximumAge: 0,
+  //   };
+
+  //   const successHandler = (position: GeolocationPosition) => {
+  //     const { latitude, longitude } = position.coords;
+  //     setPosition([latitude, longitude]); // Met à jour avec les coordonnées actuelles
+  //   };
+
+  //   const errorHandler = (error: GeolocationPositionError) => {
+  //     setError(
+  //       "Erreur lors de la récupération de la position : " + error.message
+  //     );
+  //     console.error(error);
+  //   };
+
+  //   navigator.geolocation.getCurrentPosition(
+  //     successHandler,
+  //     errorHandler,
+  //     geolocationOptions
+  //   );
+  // }, []);
+
+  // count tous les employe
 
   useEffect(() => {
     const fetchEmployeeCount = async () => {
@@ -26,7 +74,7 @@ const Page = () => {
         const response = await axios.get(
           "http://localhost:2003/api/v.01/employe/count"
         );
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
         if (Array.isArray(response.data) && response.data.length > 0) {
           setEmployeeCount(response.data[0].count);
         } else {
@@ -38,6 +86,66 @@ const Page = () => {
     };
 
     fetchEmployeeCount();
+  }, []);
+
+  // count tous les tectMoyen
+  useEffect(() => {
+    const CountTechMoyen = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:2003/api/v.01/employe/countTechMoyen`
+        );
+        console.log("API Response:", response.data);
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setEmployeTechMoyen(response.data[0].count);
+        } else {
+          setEmployeTechMoyen(response.data.count);
+        }
+      } catch (err) {
+        console.error(err, "erreur");
+      }
+    };
+    CountTechMoyen();
+  }, []);
+
+  // count tous les techSup
+  useEffect(() => {
+    const CountTechSup = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:2003/api/v.01/employe/countTechSup`
+        );
+        console.log("API Response:", response.data);
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setEmployeTechSup(response.data[0].count);
+        } else {
+          setEmployeTechSup(response.data.count);
+        }
+      } catch (err) {
+        console.error(err, "erreur");
+      }
+    };
+    CountTechSup();
+  }, []);
+
+  // count tous les techMoyenSup
+  useEffect(() => {
+    const CountTechMoyenSup = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:2003/api/v.01/employe/countTechMoyenSup`
+        );
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setEmployeTechMoyenSup(response.data[0].count);
+        } else {
+          setEmployeTechMoyenSup(response.data.count);
+        }
+      } catch (err) {
+        console.error(err, "erreur");
+      }
+    };
+
+    CountTechMoyenSup();
   }, []);
 
   const [dateTime, setDateTime] = useState({
@@ -69,22 +177,6 @@ const Page = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startCount = 0;
-    const interval = setInterval(() => {
-      startCount += Math.ceil(employeeCount / 100);
-      if (startCount >= employeeCount) {
-        startCount = employeeCount;
-        clearInterval(interval);
-      }
-      setCount(startCount);
-    }, 30);
-
-    return () => clearInterval(interval);
-  }, [employeeCount]);
-
   return (
     <div>
       <div className="overflow-hidden">
@@ -94,14 +186,6 @@ const Page = () => {
           }`}
         >
           <section className=" border-[1px] border-[#bbc6d3]">
-            {/* <div
-              className={`absolute left-[10.7rem] top-7 bg-[#d6dfece2] rounded-full p-2 cursor-pointer ${
-                reduct && " absolute left-[2.5rem]"
-              }`}
-              onClick={handleClick}
-            >
-              <ChevronRight className="w-6 h-6" />
-            </div> */}
             <div className="py-[8rem] px-2">
               <ul className="">
                 {data.map((element) => (
@@ -116,7 +200,7 @@ const Page = () => {
                     >
                       <Link
                         href={element.link}
-                        className="flex items-center gap-2  cursor-pointer "
+                        className="flex items-center gap-2 cursor-pointer"
                       >
                         <TooltipProvider delayDuration={0}>
                           <Tooltip>
@@ -149,8 +233,9 @@ const Page = () => {
               </ul>
             </div>
           </section>
+
           <section
-            className=" overflow-x-hidden px-8 p-8 bg-cover bg-center"
+            className=" overflow-x-hidden p-7  bg-cover bg-center"
             style={{ backgroundImage: "url('/blob-scene-haikei (3).svg')" }}
           >
             <div className=" flex justify-between ">
@@ -160,43 +245,126 @@ const Page = () => {
                 <Calendar className="w-4 h-5" />
               </div>
             </div>
-            <main className=" px-0 py-8">
-              <div className=" flex items-center gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="w-[16rem] z-50 bg-white rounded-md border-[1.5px] shadow  h-[10rem] ">
-                    {/* border-[1.5px] */}
-                    <div className="p-6">
-                      <span className=" ">
-                        {/* fill-foreground relative top-3 flex-col text-3xl text-[#08162a] font-bold */}
-                        {count.toLocaleString()}
-                        employés
-                      </span>
-                      {/* <div className="flex items-center">
-                        <div className=" flex flex-col">
-                          <span className=" font-semibold text-[1.1rem]">
-                            Total d'
-                          </span>
-                          <span className="text-[.9rem] text-[#aaa]">
-                            Dernier temps
-                          </span>
-                          <span className=" fill-foreground relative top-3 flex-col text-3xl text-[#08162a] font-bold ">
-                            {count.toLocaleString()}
-                          </span>
+            <main className="py-5">
+              <div className="flex gap-3">
+                <div className="flex gap-3">
+                  <div className="w-[17.7rem] h-[5.5rem] z-50 bg-white rounded-md border-[1.3px] shadow   overflow-hidden ">
+                    <div className="px-3 py-[0.6rem]">
+                      <div className=" flex items-center gap-5">
+                        <div className="relative w-[4rem] h-[4rem] bg-[#7077df45] rounded-lg">
+                          <div className="relative text-2xl top-[0.83rem] font-bold text-center">
+                            <CountUp
+                              start={0}
+                              end={employeeCount}
+                              duration={1.5}
+                              separator=","
+                            />
+                          </div>
                         </div>
-                        <div className="relative bg-[#96d08d71] rounded-xl  p-2 left-6 ">
-                          <MdOutlineBadge className="h-7 w-7 " />
-                        </div>
-                      </div> */}
+                        <h2 className=" font-serif">Total Employés</h2>
+                      </div>
                     </div>
                   </div>
-                  <div className="w-[16rem] rounded-md h-[10rem] z-50 bg-white shadow border-[1.5px]"></div>
-                  <div className="w-[16rem] rounded-md h-[10rem] z-50 bg-white shadow border-[1.5px]"></div>
-                  <div className="w-[16rem] rounded-md h-[10rem] z-50 bg-white shadow border-[1.5px]"></div>
+                  <div className="w-[17.7rem] rounded-md h-[5.5rem] z-50 bg-white shadow border-[1.3px]">
+                    <div className="px-3 py-[0.7rem]">
+                      <div className=" flex items-center gap-3">
+                        <div className="relative w-[4rem] h-[4rem] bg-[#cfd14279] rounded-md">
+                          <div className="relative  text-2xl top-[0.83rem] font-bold text-center">
+                            <CountUp
+                              start={0}
+                              end={employeTechMoyenSup}
+                              duration={1.5}
+                              separator=","
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <h1 className=" font-serif">Employés</h1>
+                          <h2 className=" font-serif">Tech-Moyen-Superieur</h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-[17.7rem] rounded-md h-[5.5rem] z-50 bg-white shadow border-[1.3px]">
+                    <div className="px-3 py-[0.6rem]">
+                      <div className=" flex items-center gap-3">
+                        <div className="relative w-[4rem] h-[4rem] bg-[#df7d705b] rounded-md">
+                          <div className="relative text-2xl top-[0.83rem] font-bold text-center">
+                            <CountUp
+                              start={0}
+                              end={employeTechSup}
+                              duration={1.5}
+                              separator=","
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <h1 className=" font-serif">Employés</h1>
+                          <h2 className=" font-serif">Tech-superieur</h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-[17.7rem] rounded-md h-[5.5rem] z-50 bg-white shadow border-[1.5px]">
+                    <div className="px-3 py-[0.6rem]">
+                      <div className=" flex items-center gap-5">
+                        <div className="relative w-[4rem] h-[4rem] bg-[#70df8456] rounded-md">
+                          <div className="relative  text-2xl top-[0.83rem] font-bold text-center">
+                            <CountUp
+                              start={0}
+                              end={employeTechMoyen}
+                              duration={1.5}
+                              separator=","
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <h1 className=" font-serif">Employés</h1>
+                          <h2 className=" font-serif">Tech-moyen</h2>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className=" w-[19rem] h-[21rem] rounded-md z-50 bg-white shadow border-[1.5px]"></div>
-                <div className=" w-[19rem] h-[21rem] rounded-md z-50 bg-white shadow border-[1.5px]"></div>
               </div>
             </main>
+            {/* <div className=" p-3 w-[20rem] h-[23rem] bg-white shadow  border-[#bbc6d3] rounded-md">
+              <h1 className=" font-bold text-xl">Localisation</h1>
+              <div>
+                <div
+                  style={{
+                    height: "19rem",
+                    width: "100%",
+                  }}
+                  className=" relative top-4"
+                >
+                  {error ? (
+                    <p>{error}</p>
+                  ) : // Vérification de la position avant de rendre MapContainer
+                  position ? (
+                    <MapContainer
+                      center={position} // Position actuelle
+                      zoom={13}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        borderRadius: "5px",
+                      }}
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      <Marker position={position} icon={redIcon}>
+                        <Popup>Vous êtes ici !</Popup>
+                      </Marker>
+                    </MapContainer>
+                  ) : (
+                    <p>Chargement de la localisation...</p>
+                  )}
+                </div>
+              </div>
+            </div> */}
           </section>
         </div>
       </div>
@@ -205,5 +373,3 @@ const Page = () => {
 };
 
 export default Page;
-{
-}

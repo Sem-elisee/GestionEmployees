@@ -12,32 +12,6 @@ const GetAdmin = (req, res) => {
   getAllData(query, res);
 };
 
-// const PostAdmin = async (req, res) => {
-//   const { Email, Numero, Mot_de_Passe } = req.body;
-//   const checkEmailQuery = "SELECT * FROM admin WHERE Email =?";
-//   db.query(checkEmailQuery, [Email], async (err, resultma) => {
-//     if (err) {
-//       return res
-//         .status(500)
-//         .json({ message: "Erreur lors de la vérification de l'email" });
-//     }
-//     if (resultma.length > 0) {
-//       return res.status(409).send("Utilisateur existe deja");
-//     } else {
-//       bcrypt.hash(Mot_de_Passe, 10, async (err, hashedPassword) => {
-//         if (err) {
-//           return res
-//             .status(500)
-//             .json({ message: "Erreur lors du hachage du mot de passe" });
-//         }
-//         const query =
-//           "INSERT INTO admin (Email, Numero, Mot_de_Passe) VALUES (?, ?, ?)";
-//         insertData(query, [Email, Numero, hashedPassword], res);
-//       });
-//     }
-//   });
-// };
-
 const PostAdmin = async (req, res) => {
   const { Email, Numero, Mot_de_Passe } = req.body;
 
@@ -94,6 +68,8 @@ const PostAdmin = async (req, res) => {
                 return res.status(201).json({
                   message:
                     "Administrateur enregistré avec succès. Veuillez vérifier votre email pour activer votre compte.",
+                  Email: Email,
+                  Numero: Numero,
                 });
               })
               .catch((emailErr) => {
@@ -159,51 +135,6 @@ const VerifyEmail = async (req, res) => {
       .json({ success: false, message: "Erreur interne du serveur" });
   }
 };
-
-// const VerifyEmail = async (req, res) => {
-//   try {
-//     const { code } = req.body;
-//     const query =
-//       "SELECT * FROM admin WHERE VerificationToken = ? AND VerificationTokenExpireAt > ?";
-//     db.query(query, [code, Date.now()], async (err, results) => {
-//       if (err) {
-//         console.log(err);
-//         return res
-//           .status(500)
-//           .json({ success: false, message: "Internal server error" });
-//       }
-//       if (results.length === 0) {
-//         return res
-//           .status(400)
-//           .json({ success: false, message: "Invalid or Expired Code" });
-//       }
-//       const user = results[0];
-//       const updateQuery =
-//         "UPDATE admin SET isVerified = TRUE, VerificationToken = NULL, VerificationTokenExpireAt = NULL WHERE AdminID = ?";
-//       db.query(updateQuery, [user.AdminID], async (updateErr, result) => {
-//         if (updateErr) {
-//           console.log(updateErr);
-//           return res
-//             .status(500)
-//             .json({ success: false, message: "Internal server error" });
-//         }
-//         await sendWelcomeEmail(user.Email, user.Name);
-//         const token = generateTokenAndSetCookie(res, result.insertId);
-
-//         return res.status(200).json({
-//           success: true,
-//           message: "Email Verified Successfully",
-//           token,
-//         });
-//       });
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     return res
-//       .status(500)
-//       .json({ success: false, message: "Internal server error" });
-//   }
-// };
 
 module.exports = {
   GetAdmin,

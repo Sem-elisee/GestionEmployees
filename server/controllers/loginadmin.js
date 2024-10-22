@@ -11,6 +11,22 @@ const GetlogAdmin = (req, res) => {
   getAllData(query, res);
 };
 
+const GetAdminInfos = async (req, res) => {
+  const { AdminID } = req.params;
+  const queryAdmin = "SELECT Email,Numero FROM admin WHERE AdminID = ?";
+  db.query(queryAdmin, [AdminID], (err, result) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ message: "erreur lors de la recuperation des informations" });
+    }
+    if (result.length === 0) {
+      res.status(404).json({ message: "admin non retrouver" });
+    }
+    return res.status(200).json(result[0]);
+  });
+};
+
 const LogAdmin = async (req, res) => {
   const { Email, Mot_de_Passe } = req.body;
 
@@ -48,6 +64,9 @@ const LogAdmin = async (req, res) => {
       const token = generateTokenAndSetCookie(res, admin.AdminID);
 
       return res.status(200).json({
+        AdminID: admin.AdminID,
+        Email: admin.Email,
+        Numero: admin.Numero,
         message: "Connexion réussie",
         token,
       });
@@ -58,4 +77,5 @@ const LogAdmin = async (req, res) => {
 module.exports = {
   LogAdmin,
   GetlogAdmin,
+  GetAdminInfos,
 };

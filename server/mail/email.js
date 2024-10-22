@@ -22,14 +22,14 @@ const sendVerificationEmail = async (email, verificationCode) => {
   }
 };
 
-const sendWelcomeEmail = async (email, name) => {
+const sendWelcomeEmail = async (email) => {
   try {
     const response = await transporter.sendMail({
       from: '"Guibe" <guibesem@gmail.com>',
       to: email,
       subject: "E-mail de bienvenue",
       text: "E-mail de bienvenue",
-      html: Welcome_Email_Template.replace("{name}", name),
+      html: Welcome_Email_Template.replace("{email}", email),
     });
     console.log("E-mail envoyé avec succès", response);
   } catch (err) {
