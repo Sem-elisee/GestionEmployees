@@ -85,7 +85,7 @@ export default function Main() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="w-[320px] rounded-md">
+        <Card className="w-[320px] rounded">
           <CardContent className="  p-6">
             <div className=" flex items-center justify-center">
               <Image src="/login.svg" width={120} height={120} alt="logo" />

@@ -141,7 +141,7 @@ const Page = () => {
                         <span>{Email}</span>
                       </div>
                       <div className=" flex flex-col">
-                        <span className="font-bold text-xl">Numero:</span>
+                        <span className="font-bold text-xl">Numéro:</span>
                         <span>+ {Numero}</span>
                       </div>
 

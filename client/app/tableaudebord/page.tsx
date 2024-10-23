@@ -2,7 +2,7 @@
 // import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { Calendar } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 
 import {
   Tooltip,
@@ -20,10 +20,12 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Calendar } from "@/components/ui/calendar";
 
 const Page = () => {
   const [click, setClick] = useState("Tableau de Bord");
   const [reduct, setReduct] = useState(true);
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   const [employeeCount, setEmployeeCount] = useState<number>(0);
   const [employeTechMoyen, setEmployeTechMoyen] = useState<number>(0);
@@ -236,13 +238,13 @@ const Page = () => {
 
           <section
             className=" overflow-x-hidden p-7  bg-cover bg-center"
-            style={{ backgroundImage: "url('/blob-scene-haikei (3).svg')" }}
+            style={{ backgroundImage: "url('/blob-scene-haikei (2).svg')" }}
           >
             <div className=" flex justify-between ">
               <h1 className="font-bold text-2xl">Tableau de Bord</h1>
               <div className="flex justify-center bg-white shadow items-center rounded-full border-[1.3px] border-gray-300 px-3 gap-2 ">
                 <p>{dateTime.date}</p> -<p>{dateTime.time}</p>
-                <Calendar className="w-4 h-5" />
+                <CalendarClock className="w-4 h-5" />
               </div>
             </div>
             <main className="py-5">
@@ -328,6 +330,7 @@ const Page = () => {
                 </div>
               </div>
             </main>
+
             {/* <div className=" p-3 w-[20rem] h-[23rem] bg-white shadow  border-[#bbc6d3] rounded-md">
               <h1 className=" font-bold text-xl">Localisation</h1>
               <div>
@@ -365,6 +368,16 @@ const Page = () => {
                 </div>
               </div>
             </div> */}
+            <div>
+              <div>
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-md shadow bg-white border w-[16rem]"
+                />
+              </div>
+            </div>
           </section>
         </div>
       </div>

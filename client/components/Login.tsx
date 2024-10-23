@@ -69,6 +69,8 @@ export default function Main() {
         });
     } catch (e) {
       console.log(e);
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -82,7 +84,7 @@ export default function Main() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="w-[320px] rounded-lg">
+        <Card className="w-[320px] rounded">
           <CardContent className=" p-6">
             <div className=" flex items-center justify-center">
               <Image
@@ -125,6 +127,13 @@ export default function Main() {
                 >
                   {showPassword ? <FaEye /> : <FaEyeSlash />}
                 </span>
+              </div>
+              <div className=" flex justify-end">
+                <Link href="/motdepasse">
+                  <h1 className=" hover:text-[#08162a]  text-sm underline">
+                    Mot de passe oublié
+                  </h1>
+                </Link>
               </div>
               <motion.div
                 whileHover={{ scale: 1.02 }}

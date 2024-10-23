@@ -78,14 +78,14 @@ const Page = () => {
   return (
     <motion.div
       className="flex justify-center items-center h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/blob-scene-haikei 11.svg')" }}
+      style={{ backgroundImage: "url('/verif.jpg')" }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.6 }}
       >
-        <Card className="w-[350px] rounded-lg">
+        <Card className="w-[330px] rounded bg-[#f3f3f3]">
           <CardContent className="p-2">
             <div className="flex items-center justify-center">
               <Image
@@ -111,7 +111,7 @@ const Page = () => {
                       value={value}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(e, index)}
-                      className="w-10 h-10 text-center text-xl border border-gray-300 rounded"
+                      className="w-10 h-10 text-center text-xl border shadow border-gray-300 rounded-xl"
                       inputMode="numeric"
                       maxLength={1}
                       autoFocus={index === 0} // Auto-focus sur le premier champ
