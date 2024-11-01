@@ -6,6 +6,11 @@ const {
   deleteData,
 } = require("../config/controllerconfig");
 
+const GetAllEmployeRecent = (req, res) => {
+  const query = "SELECT * FROM employe ORDER BY Date_Embauche DESC LIMIT 6";
+  getAllData(query, res);
+};
+
 const GetAllEmploye = (req, res) => {
   const query = "SELECT * FROM employe";
   getAllData(query, res);
@@ -74,4 +79,5 @@ module.exports = {
   GetAllEmployeCountTechMoyen,
   GetAllEmployeCountTechMoyenSup,
   GetAllEmployeCountTechSup,
+  GetAllEmployeRecent,
 };

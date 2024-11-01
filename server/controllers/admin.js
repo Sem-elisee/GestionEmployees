@@ -1,4 +1,4 @@
-const { getAllData } = require("../config/controllerconfig");
+const { getAllData, modifyData } = require("../config/controllerconfig");
 const { db } = require("../database/connect");
 const bcrypt = require("bcrypt");
 const { sendVerificationEmail, sendWelcomeEmail } = require("../mail/email");
@@ -59,6 +59,8 @@ const PostAdmin = async (req, res) => {
               });
             }
 
+            const AdminID = result.insertId;
+
             // Envoi de l'email de vérification
             sendVerificationEmail(Email, verificationToken)
               .then(() => {
@@ -68,6 +70,7 @@ const PostAdmin = async (req, res) => {
                 return res.status(201).json({
                   message:
                     "Administrateur enregistré avec succès. Veuillez vérifier votre email pour activer votre compte.",
+                  AdminID: AdminID,
                   Email: Email,
                   Numero: Numero,
                 });
@@ -83,6 +86,49 @@ const PostAdmin = async (req, res) => {
       });
     }
   });
+};
+
+const ModifierPassword = (req, res) => {
+  const { Email, Mot_de_Passe, New_MotdePasse } = req.body;
+
+  // Vérifier si les mots de passe correspondent
+  if (Mot_de_Passe !== New_MotdePasse) {
+    return res
+      .status(400)
+      .json({ message: "Les mots de passe ne correspondent pas" });
+  }
+
+  // Hacher le nouveau mot de passe
+  bcrypt.hash(New_MotdePasse, 10, (err, hashedPassword) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Erreur lors du hachage du mot de passe" });
+    }
+
+    // Mettre à jour le mot de passe dans la base de données
+    const query = "UPDATE admin SET Mot_de_Passe = ? WHERE Email = ?";
+    db.query(query, [hashedPassword, Email], (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Erreur lors de la mise à jour du mot de passe" });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Administrateur non trouvé" });
+      }
+      return res
+        .status(200)
+        .json({ message: "Mot de passe mis à jour avec succès" });
+    });
+  });
+};
+
+const putAdmin = (req, res) => {
+  const query = "UPDATE admin SET Numero=? WHERE AdminID=? ";
+  const { Numero } = req.body;
+  const AdminID = req.params.id;
+  modifyData(query, [Numero, AdminID], res);
 };
 
 const VerifyEmail = async (req, res) => {
@@ -139,5 +185,7 @@ const VerifyEmail = async (req, res) => {
 module.exports = {
   GetAdmin,
   PostAdmin,
+  putAdmin,
   VerifyEmail,
+  ModifierPassword,
 };

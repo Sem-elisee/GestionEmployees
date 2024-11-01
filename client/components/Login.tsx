@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Mails, Loader, Phone, PhoneCall, User } from "lucide-react";
 import { PiLockKeyOpenDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,8 @@ export default function Main() {
     setShowPassword(!showPassword);
   };
 
+  // Run once on component mount
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setisLoading(true);
@@ -45,46 +47,81 @@ export default function Main() {
     };
 
     try {
-      await axios
-        .post(`http://localhost:2003/api/v.01/logAdmin/`, AdminData)
-        .then((response) => {
-          if (response) {
-            toast.success(" Bienvenue, administrateur !");
-            const token = response.data.token;
-            setUserInfo(response.data.Email, response.data.Numero);
-            console.log(response.data.Email);
-            console.log(response.data.Numero);
-            if (token) {
-              localStorage.setItem("authToken", token);
-              router.push("/tableaudebord");
-            }
-          }
-          new Promise((resolve) => setTimeout(resolve, 2000));
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error(
-            "Erreur de connexion. Vérifiez votre email et votre mot de passe."
-          );
-        });
-    } catch (e) {
-      console.log(e);
+      const response = await axios.post(
+        `http://localhost:2003/api/v.01/logAdmin/`,
+        AdminData
+      );
+
+      if (response) {
+        const { token, Email, Numero, AdminID } = response.data; // Assurez-vous que AdminID est présent dans la réponse
+        useUserStore.getState().setUserInfo(Email, Numero, AdminID); // Mettre à jour le store avec AdminID
+
+        if (token) {
+          localStorage.setItem("authToken", token);
+          router.push("/tableaudebord");
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        "Erreur de connexion. Vérifiez votre email et votre mot de passe."
+      );
     } finally {
       setisLoading(false);
     }
   };
 
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setisLoading(true);
+  //   let AdminData = {
+  //     Email: email,
+  //     Mot_de_Passe: password,
+  //   };
+
+  //   try {
+  //     await axios
+  //       .post(`http://localhost:2003/api/v.01/logAdmin/`, AdminData)
+  //       .then((response) => {
+  //         if (response) {
+  //           toast.success(" Bienvenue, administrateur !");
+  //           const { token, Email, Numero, AdminID } = response.data;
+  //           setUserInfo(Email,Numero,AdminID);
+  //           console.log(response.data);
+  //           // console.log(response.data.Numero);
+  //           if (token) {
+  //             localStorage.setItem("authToken", token);
+  //             router.push("/tableaudebord");
+  //           }
+  //         }
+  //         new Promise((resolve) => setTimeout(resolve, 2000));
+  //       })
+  //       .catch((err) => {
+  //         console.error(err);
+  //         toast.error(
+  //           "Erreur de connexion. Vérifiez votre email et votre mot de passe."
+  //         );
+  //       });
+  //   } catch (e) {
+  //     console.log(e);
+  //   } finally {
+  //     setisLoading(false);
+  //   }
+  // };
+
   return (
     <div
       className=" flex justify-center items-center h-screen bg-cover bg-center "
-      style={{ backgroundImage: "url('/img.jpg')" }}
+      style={{ backgroundImage: "url('/test.svg')" }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="w-[320px] rounded">
+        <Card className="w-[320px] rounded-xl">
           <CardContent className=" p-6">
             <div className=" flex items-center justify-center">
               <Image

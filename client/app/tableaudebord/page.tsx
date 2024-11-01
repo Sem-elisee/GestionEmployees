@@ -1,9 +1,6 @@
 "use client";
-// import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { CalendarClock } from "lucide-react";
-
 import {
   Tooltip,
   TooltipContent,
@@ -11,63 +8,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import CountUp from "react-countup";
-
 import { data } from "@/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GrGroup } from "react-icons/gr";
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { Calendar } from "@/components/ui/calendar";
+import CourbeEvolution from "@/components/CourbeEvolution";
+import AnalysTableau from "@/components/AnalysTableau";
+import { Radars } from "@/components/Radars";
+import PieChar from "@/components/PieChar";
 
 const Page = () => {
   const [click, setClick] = useState("Tableau de Bord");
   const [reduct, setReduct] = useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-
   const [employeeCount, setEmployeeCount] = useState<number>(0);
   const [employeTechMoyen, setEmployeTechMoyen] = useState<number>(0);
   const [employeTechMoyenSup, setEmployeTechMoyenSup] = useState<number>(0);
   const [employeTechSup, setEmployeTechSup] = useState<number>(0);
-  // const [position, setPosition] = useState(null);
-  // const [position, setPosition] = useState<L.LatLngTuple | null>(null);
-  // const [error, setError] = useState<string | null>(null);
-
-  // const redIcon = new L.Icon({
-  //   iconUrl:
-  //     "https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF0000",
-  //   iconSize: [25, 41],
-  //   iconAnchor: [12, 41],
-  // });
-
-  // useEffect(() => {
-  //   const geolocationOptions = {
-  //     enableHighAccuracy: true,
-  //     timeout: 10000,
-  //     maximumAge: 0,
-  //   };
-
-  //   const successHandler = (position: GeolocationPosition) => {
-  //     const { latitude, longitude } = position.coords;
-  //     setPosition([latitude, longitude]); // Met à jour avec les coordonnées actuelles
-  //   };
-
-  //   const errorHandler = (error: GeolocationPositionError) => {
-  //     setError(
-  //       "Erreur lors de la récupération de la position : " + error.message
-  //     );
-  //     console.error(error);
-  //   };
-
-  //   navigator.geolocation.getCurrentPosition(
-  //     successHandler,
-  //     errorHandler,
-  //     geolocationOptions
-  //   );
-  // }, []);
-
   // count tous les employe
 
   useEffect(() => {
@@ -237,7 +195,7 @@ const Page = () => {
           </section>
 
           <section
-            className=" overflow-x-hidden p-7  bg-cover bg-center"
+            className=" overflow-x-hidden p-5  bg-cover bg-center"
             style={{ backgroundImage: "url('/blob-scene-haikei (2).svg')" }}
           >
             <div className=" flex justify-between ">
@@ -331,52 +289,14 @@ const Page = () => {
               </div>
             </main>
 
-            {/* <div className=" p-3 w-[20rem] h-[23rem] bg-white shadow  border-[#bbc6d3] rounded-md">
-              <h1 className=" font-bold text-xl">Localisation</h1>
+            <div className="py-0 flex gap-3">
               <div>
-                <div
-                  style={{
-                    height: "19rem",
-                    width: "100%",
-                  }}
-                  className=" relative top-4"
-                >
-                  {error ? (
-                    <p>{error}</p>
-                  ) : // Vérification de la position avant de rendre MapContainer
-                  position ? (
-                    <MapContainer
-                      center={position} // Position actuelle
-                      zoom={13}
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        borderRadius: "5px",
-                      }}
-                    >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      />
-                      <Marker position={position} icon={redIcon}>
-                        <Popup>Vous êtes ici !</Popup>
-                      </Marker>
-                    </MapContainer>
-                  ) : (
-                    <p>Chargement de la localisation...</p>
-                  )}
-                </div>
+                <Radars />
               </div>
-            </div> */}
-            <div>
-              <div>
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="rounded-md shadow bg-white border w-[16rem]"
-                />
-              </div>
+              <AnalysTableau />
+            </div>
+            <div className="flex py-3 justify-between ">
+              <CourbeEvolution />
             </div>
           </section>
         </div>

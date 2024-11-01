@@ -25,7 +25,7 @@ import { useUserStore } from "@/store/Store";
 export default function Main() {
   // const [isClient, setIsClient] = useState(false);
   const [email, setEmail] = useState<string>("");
-  const [numero, setNumero] = useState<number>(225);
+  const [numero, setNumero] = useState<string>("");
   const [password, setPassword] = useState<any>("");
   const [showPassword, setShowPassword] = useState(false);
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -62,10 +62,8 @@ export default function Main() {
         .post(`http://localhost:2003/api/v.01/admin`, adminInscription)
         .then((response) => {
           if (response) {
-            setUserInfo(response.data.Email, response.data.Numero);
-            setEmail("");
-            setPassword("");
-            setNumero(0);
+            const { Email, Numero, AdminID } = response.data;
+            useUserStore.getState().setUserInfo(Email, Numero, AdminID);
             router.push("/verification");
           }
         })
@@ -78,14 +76,14 @@ export default function Main() {
   return (
     <div
       className=" flex justify-center items-center object-cover h-screen bg-cover bg-center "
-      style={{ backgroundImage: "url('/img1.jpg')" }}
+      style={{ backgroundImage: "url('/test.svg')" }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="w-[320px] rounded">
+        <Card className="w-[320px] rounded-xl">
           <CardContent className="  p-6">
             <div className=" flex items-center justify-center">
               <Image src="/login.svg" width={120} height={120} alt="logo" />
@@ -107,15 +105,15 @@ export default function Main() {
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 gap-1 flex items-center pointer-events-none">
                   <Image src="/civ.png" width={20} height={20} alt="" />
-                  <h1>+</h1>
+                  <h1>+225</h1>
                 </span>
                 <Input
                   placeholder="Numéro de téléphone"
-                  type="number"
-                  className="w-full pl-[3rem] h-[2.7rem]"
+                  type="text"
+                  className="w-full pl-[4.9rem] h-[2.7rem]"
                   required
                   value={numero}
-                  onChange={(e) => setNumero(Number(e.target.value))}
+                  onChange={(e) => setNumero(e.target.value)}
                 />
               </div>
               <div className="relative ">

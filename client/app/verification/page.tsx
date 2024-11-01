@@ -78,14 +78,14 @@ const Page = () => {
   return (
     <motion.div
       className="flex justify-center items-center h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/verif.jpg')" }}
+      style={{ backgroundImage: "url('/test.svg')" }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Card className="w-[330px] rounded bg-[#f3f3f3]">
+        <Card className="w-[330px] rounded-xl bg-[#f3f3f3]">
           <CardContent className="p-2">
             <div className="flex items-center justify-center">
               <Image

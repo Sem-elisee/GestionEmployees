@@ -63,15 +63,15 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded-sm shadow border">
-        <Table>
-          <TableHeader className="">
+        <Table className=" bg-white ">
+          <TableHeader className=" bg-gray-300">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className=" ">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
-                      className=" text-[#08162a] font-semibold text-center"
+                      className=" text-[#08162a] py-3 font-semibold text-center"
                     >
                       {header.isPlaceholder
                         ? null
@@ -89,6 +89,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
+                  className="even:bg-stone-100"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >

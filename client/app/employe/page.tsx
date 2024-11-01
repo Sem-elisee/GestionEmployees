@@ -92,12 +92,12 @@ const Page = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      router.push("/");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("authToken");
+  //   if (!token) {
+  //     router.push("/");
+  //   }
+  // }, [router]);
 
   // const [selectedImage, setSelectedImage] = useState(
   //   "/Image upload-bro (1).svg"
@@ -118,7 +118,10 @@ const Page = () => {
   // la 3
   const { error, mutate, isPending } = useMutation({
     mutationFn: (formData: FormData) => {
-      return axios.post(`http://localhost:2003/api/v.01/employe`, formData);
+      return axios.post(
+        `http://localhost:2003/api/v.01/employe/uploads`,
+        formData
+      );
     },
   });
 
@@ -181,7 +184,7 @@ const Page = () => {
 
   const mutation = useMutation({
     mutationFn: (value: any) =>
-      axios.post("http://localhost:2003/api/v.01/employe", value),
+      axios.post("http://localhost:2003/api/v.01/employe/uploads", value),
     onSuccess: () => {
       dataMap.refetch();
       setFormData({

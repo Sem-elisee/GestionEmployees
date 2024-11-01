@@ -8,6 +8,7 @@ const {
   GetAllEmployeCountTechMoyen,
   GetAllEmployeCountTechMoyenSup,
   GetAllEmployeCountTechSup,
+  GetAllEmployeRecent,
 } = require("../controllers/employe");
 
 const path = require("path");
@@ -25,16 +26,18 @@ const storage = multer.diskStorage({
     ); // Définir un nom unique pour le fichier
   },
 });
-
 const upload = multer({ storage: storage });
+
 const router = express.Router();
 
-router.route("/").get(GetAllEmploye).post(upload.single("Image"), PostEmploye);
+router.route("/").get(GetAllEmploye);
+router.route("/uploads").post(upload.single("Image"), PostEmploye);
 router.route("/:id").put(upload.single("Image"), PutEmploye);
 router.route("/:id").delete(DeleteEmploye);
 router.route("/count").get(GetAllEmployeCount);
 router.route("/countTechMoyen").get(GetAllEmployeCountTechMoyen);
 router.route("/countTechMoyenSup").get(GetAllEmployeCountTechMoyenSup);
 router.route("/countTechSup").get(GetAllEmployeCountTechSup);
+router.route("/employeRecent").get(GetAllEmployeRecent);
 
 module.exports = router;
